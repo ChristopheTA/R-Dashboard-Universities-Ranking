@@ -21,7 +21,7 @@ ui <- fluidPage(
       
       selectizeInput(inputId = "type",
                   label = "Score Type",
-                  choices = c("teaching", "international", "research", "citations", "income")
+                  choices = colnames(data[4:8])
       ),
       
       sliderInput(inputId = "years",
@@ -35,7 +35,9 @@ ui <- fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput(outputId = "plot")
+      plotOutput(outputId = "histogram"),
+      leafletOutput(outputId = "map")
+      
     )
   )
 )
@@ -43,14 +45,28 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  output$plot <- renderPlot({
-    
+  output$histogram <- renderPlot({
     data %>%
       filter(year==input$years) %>%
-        ggplot(aes(x = input$type)) +
+        ggplot(aes_string(x = input$type)) +
         geom_histogram(boundary = 0, binwidth = 5)
     
   })
+  output$map <- renderLeaflet({
+    
+    leaflet(g) %>% addTiles() %>%
+      addCircles(lng = ~longitude, lat = ~latitude, weight = 1,
+                 radius = ~n * 6500, popup =  paste0( "Country:"
+                                                      , g$country 
+                                                      , "<br>"
+                                                      ,"Number of universities:"
+                                                      , g$n
+                 )
+      )
+    
+    
+  })
+  
 }
 
 # Run the application 
