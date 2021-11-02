@@ -1,4 +1,3 @@
-source("imports.R")
 source("global.R")
 #
 # This is a Shiny web application. You can run the application by clicking
@@ -18,10 +17,17 @@ ui <- fluidPage(
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
-      
+      selectizeInput(inputId = "ytype",
+                     label = "Y Type",
+                     choices = colnames(data[4:13])
+      ),    
+      selectizeInput(inputId = "xtype",
+                     label = "X Type",
+                     choices = colnames(data[4:13])
+      ),
       selectizeInput(inputId = "type",
-                  label = "Score Type",
-                  choices = colnames(data[4:8])
+                     label = "Score Type",
+                     choices = colnames(data[4:13])
       ),
       
       sliderInput(inputId = "years",
@@ -35,6 +41,7 @@ ui <- fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
+      plotOutput(outputId = "graph"),
       plotOutput(outputId = "histogram"),
       leafletOutput(outputId = "map")
       
@@ -45,11 +52,19 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
+  
+  output$graph <- renderPlot({
+    data %>%
+      filter(year==input$years) %>%
+      ggplot(aes_string(x = input$xtype, y = input$ytype)) +
+      geom_point()
+    
+  })
   output$histogram <- renderPlot({
     data %>%
       filter(year==input$years) %>%
-        ggplot(aes_string(x = input$type)) +
-        geom_histogram(boundary = 0, binwidth = 5)
+      ggplot(aes_string(x = input$type)) +
+      geom_histogram(boundary = 0, binwidth = 5)
     
   })
   output$map <- renderLeaflet({
@@ -61,6 +76,9 @@ server <- function(input, output) {
                                                       , "<br>"
                                                       ,"Number of universities:"
                                                       , g$n
+                                                      , "<br>"
+                                                      ,"Total Score:"
+                                                      , g$total_score
                  )
       )
     
@@ -71,4 +89,3 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
