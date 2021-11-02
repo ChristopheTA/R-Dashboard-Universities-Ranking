@@ -15,22 +15,22 @@ server <- function(input, output) {
   
   output$graph <- renderPlot({
     data %>%
-      filter(year==input$years) %>%
-      ggplot(aes_string(x = input$xtype, y = input$ytype)) +
+      filter(year==input$graph_years) %>%
+      ggplot(aes_string(x = input$graph_xtype, y = input$graph_ytype)) +
       geom_point()
     
   })
   output$histogram <- renderPlot({
     data %>%
-      filter(year==input$years) %>%
-      ggplot(aes_string(x = input$type)) +
+      filter(year==input$histo_years) %>%
+      ggplot(aes_string(x = input$histo_type)) +
       geom_histogram(boundary = 0, binwidth = 5)
     
   })
   output$map <- renderLeaflet({
     
     data %>%
-      filter(year==input$years) %>%
+      filter(year==input$map_years) %>%
       group_by(country) %>%
       summarize(n=n(), longitude, latitude) %>%
       unique() %>%
@@ -45,6 +45,16 @@ server <- function(input, output) {
     
     
       )
+    
+    
+  })
+  
+  output$top10 <- renderTable({
+    
+    data[order(data$world_rank),] %>%
+      filter(year==input$top10_years) %>%
+      subset(select = c(world_rank,university_name,country,total_score)) %>%
+      head(10)
     
     
   })
