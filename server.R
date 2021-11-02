@@ -1,4 +1,4 @@
-source("global.R")
+source("ui.R")
 #
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
@@ -8,46 +8,6 @@ source("global.R")
 #    http://shiny.rstudio.com/
 #
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-  
-  # Application title
-  titlePanel("duc"),
-  
-  # Sidebar with a slider input for number of bins
-  sidebarLayout(
-    sidebarPanel(
-      selectizeInput(inputId = "ytype",
-                     label = "Y Type",
-                     choices = colnames(data[4:13])
-      ),    
-      selectizeInput(inputId = "xtype",
-                     label = "X Type",
-                     choices = colnames(data[4:13])
-      ),
-      selectizeInput(inputId = "type",
-                     label = "Score Type",
-                     choices = colnames(data[4:13])
-      ),
-      
-      sliderInput(inputId = "years",
-                  label = "Year",
-                  min = 2011,
-                  max = 2016,
-                  step = 1,
-                  value = 2016,
-                  animate = T)
-    ),
-    
-    # Show a plot of the generated distribution
-    mainPanel(
-      plotOutput(outputId = "graph"),
-      plotOutput(outputId = "histogram"),
-      leafletOutput(outputId = "map")
-      
-    )
-  )
-)
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -69,17 +29,21 @@ server <- function(input, output) {
   })
   output$map <- renderLeaflet({
     
-    leaflet(g) %>% addTiles() %>%
+    data %>%
+      filter(year==input$years) %>%
+      group_by(country) %>%
+      summarize(n=n(), longitude, latitude) %>%
+      unique() %>%
+      leaflet() %>% addTiles() %>%
       addCircles(lng = ~longitude, lat = ~latitude, weight = 1,
-                 radius = ~n * 6500, popup =  paste0( "Country:"
-                                                      , g$country 
+                 radius = ~n * 6500, popup =  ~paste0( "Country:"
+                                                      , country 
                                                       , "<br>"
                                                       ,"Number of universities:"
-                                                      , g$n
-                                                      , "<br>"
-                                                      ,"Total Score:"
-                                                      , g$total_score
+                                                      , n
                  )
+    
+    
       )
     
     
@@ -89,3 +53,4 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+    
