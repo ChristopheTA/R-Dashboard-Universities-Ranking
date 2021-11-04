@@ -1,5 +1,3 @@
-source("global.R")
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
@@ -67,8 +65,8 @@ ui <- fluidPage(
                                       min = 2011,
                                       max = 2016,
                                       step = 1,
-                                      value = 2016,
-                                      animate = T)
+                                      value = 2016
+                                      )
                         ),
                         
                         # Show a plot of the generated distribution
@@ -99,3 +97,4 @@ ui <- fluidPage(
             )
     )
 )
+

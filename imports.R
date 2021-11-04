@@ -1,7 +1,8 @@
 install.packages("tidyverse")
 install.packages("shiny")
 install.packages("leaflet")
-
+install.packages("geojsonio")
 library(tidyverse)
 library(shiny)
 library(leaflet)
+library(geojsonio)
