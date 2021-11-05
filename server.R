@@ -1,9 +1,6 @@
-# Define server logic required to draw a histogram
-countries = geojson_read("countries.geojson", what = "sp")
-
 server <- function(input, output) {
   
-  
+  # Output du graphique
   output$graph <- renderPlot({
     data %>%
       filter(year==input$graph_years) %>%
@@ -11,6 +8,8 @@ server <- function(input, output) {
       geom_point()
     
   })
+  
+  # Output de l'histogramme
   output$histogram <- renderPlot({
     data %>%
       filter(year==input$histo_years) %>%
@@ -18,26 +17,44 @@ server <- function(input, output) {
       geom_histogram(boundary = 0, binwidth = 5)
     
   })
+  
+  # Output de la map
   output$map <- renderLeaflet({
-    # group data
+    # Groupement des données
     grouped_data <- data %>%
       filter(year==input$map_years) %>%
       group_by(country) %>%
-      summarize(n=n()) %>%
+      summarize(n=n(), num_students = sum(num_students, na.rm = TRUE)) %>%
       unique() 
-    # create palette
-    bins <- c(1, 5, 10, 20, 35, 50, 80, Inf)
-    pal <- colorBin("YlOrRd", domain = grouped_data$n, bins = bins)
-    # set labels
-    labels <- sprintf(
-      "<strong>%s</strong><br/>%g universities <sup></sup>",
-      grouped_data$country, grouped_data$n) %>% lapply(htmltools::HTML)
-    #order countries
+    
+    # Changement de valeurs en fonction de l'input
+    if(input$map_type=="Number of Universities"){
+      value <- grouped_data$n
+      bins <- c(1, 5, 10, 20, 35, 50, 80, Inf)
+      labels <- sprintf(
+        "<strong>%s</strong><br/>%g universities <sup></sup>",
+        grouped_data$country, value) %>% lapply(htmltools::HTML)
+    }
+    else{
+      value <- grouped_data$num_students
+      bins <- c(1, 100, 1000, 10000, 25000, 50000, Inf)
+      labels <- sprintf(
+        "<strong>%s</strong><br/>%g students <sup></sup>",
+        grouped_data$country, value) %>% lapply(htmltools::HTML)
+    }
+    
+    # Création de la palette
+    pal <- colorBin("YlOrRd", domain = value, bins = bins)
+
+    
+    # Rangement des pays par ordre alphabétique
     countries_data <- countries[countries$ADMIN %in% grouped_data$country,]
     countries_data <- countries_data[order(countries_data$ADMIN),]
+    
+    # Création de la map
     countries_data %>% leaflet() %>% addTiles %>%
       addPolygons(
-        fillColor = ~pal(grouped_data$n),
+        fillColor = ~pal(value),
         weight = 2,
         opacity = 1,
         color = "white",
@@ -48,6 +65,7 @@ server <- function(input, output) {
       addLegend(pal = pal, values = grouped_data$n, opacity = 0.7, position = "bottomright")
   })
   
+  # Output du Top 10 des universités
   output$top10 <- renderTable({
     
     data[order(data$world_rank),] %>%
