@@ -1,15 +1,29 @@
-# Importation des datasets
-data = read.table("timesData.csv", sep = ',', header = T, na.strings = c("NA","-",""))
+install.packages("tidyverse")
+install.packages("shiny")
+install.packages("leaflet")
+install.packages("geojsonio")
+install.packages("shinythemes")
+library(tidyverse)
+library(shiny)
+library(leaflet)
+library(geojsonio)
+library(shinythemes)
+
+
+
+
+# Importation du dataset
+data = read.table("Data/timesData.csv", sep = ',', header = T, na.strings = c("NA","-",""))
 
 
 # Define server logic required to draw a histogram
-countries = geojson_read("countries.geojson", what = "sp")
+countries = geojson_read("Data/countries.geojson", what = "sp")
 
 
 ### Transformation des données ###
 
 # On change le nom de certains pays
-# Pas le nom officiel
+# Pas le bon nom
 data$country <- data$country %>% str_replace("Hong Kong","Hong Kong S.A.R.")
 data$country <- data$country %>% str_replace("Macau","Macao S.A.R")
 data$country <- data$country %>% str_replace("Serbia","Republic of Serbia")
@@ -25,11 +39,11 @@ data$num_students <- data$num_students %>%
   str_replace(",","") %>% 
   as.numeric()
 
-# On met world_rank en nombre
+# On met world_rank en entier
 data$world_rank <- data$world_rank %>% 
   str_replace("=","") %>% 
   str_replace("-",".") %>% 
-  as.numeric()
+  as.integer()
 
 # On met international_students en nombre 
 data$international_students <- data$international_students %>%
@@ -43,4 +57,9 @@ data$female_male_ratio <- data$female_male_ratio %>%
   as.integer()
 colnames(data)[13] <- "female_ratio"
 
-data
+source("server.R", local = TRUE)
+source("ui.R", local = TRUE)
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+

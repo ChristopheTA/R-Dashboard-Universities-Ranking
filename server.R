@@ -37,7 +37,7 @@ server <- function(input, output) {
     }
     else{
       value <- grouped_data$num_students
-      bins <- c(1, 100, 1000, 10000, 25000, 50000, Inf)
+      bins <- c(1, 100000, 250000, 500000, 800000, 1200000, 1500000, Inf)
       labels <- sprintf(
         "<strong>%s</strong><br/>%g students <sup></sup>",
         grouped_data$country, value) %>% lapply(htmltools::HTML)
@@ -67,12 +67,17 @@ server <- function(input, output) {
   
   # Output du Top 10 des universités
   output$top10 <- renderTable({
-    
-    data[order(data$world_rank),] %>%
+    top10data = data
+    if(input$top10_country=="World"){
+      top10data <- data
+    }
+    else{
+      top10data <- data %>% filter(country==input$top10_country)
+    }
+    top10data[order(top10data$world_rank),] %>%
       filter(year==input$top10_years) %>%
       subset(select = c(world_rank,university_name,country,total_score)) %>%
       head(10)
-    
     
   })
   
