@@ -100,7 +100,7 @@ ui <- fluidPage(
                           # Sélection de la catégorie
                           radioButtons(inputId = "map_type",
                                        label = "Select Category:",
-                                       choices = c("Number of Universities", "Number of Students", "Ratio of International Students"),
+                                       choices = c("Number of Universities", "Number of Students", "Ratio of International Students", "Ratio Female-Male"),
                                        selected = "Number of Universities")
                         ),
                         

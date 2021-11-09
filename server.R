@@ -24,7 +24,11 @@ server <- function(input, output) {
     grouped_data <- data %>%
       filter(year==input$map_years) %>%
       group_by(country) %>%
-      summarize(n=n(), num_students = sum(num_students, na.rm = TRUE), international_ratio = mean(international_students_ratio, na.rm = TRUE)) %>%
+      summarize(
+        n=n(), 
+        num_students = sum(num_students, na.rm = TRUE), 
+        international_ratio = mean(international_students_ratio, na.rm = TRUE), 
+        female_ratio = mean(female_ratio, na.rm = TRUE)) %>%
       unique() 
     
     # Changement de valeurs en fonction de l'input
@@ -42,11 +46,18 @@ server <- function(input, output) {
         "<strong>%s</strong><br/>%g students <sup></sup>",
         grouped_data$country, value) %>% lapply(htmltools::HTML)
     }
-    else{
+    else if(input$map_type=="Ratio of International Students"){
       value <- grouped_data$international_ratio
       bins <- c(0, 5, 10, 15, 20, 25, Inf)
       labels <- sprintf(
         "<strong>%s</strong><br/>%g %% of international students <sup></sup>",
+        grouped_data$country, value) %>% lapply(htmltools::HTML)
+    }
+    else{
+      value <- grouped_data$female_ratio
+      bins <- c(15, 30, 40, 50, 60, 75)
+      labels <- sprintf(
+        "<strong>%s</strong><br/>%g %% female students <sup></sup>",
         grouped_data$country, value) %>% lapply(htmltools::HTML)
     }
     
