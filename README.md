@@ -26,12 +26,12 @@ Finalement, tapez la commande `git pull` et vous aurez à votre disposition tous
 ## Comprendre les fichiers
 
 Voici l'inventaire des fichiers présents dans notre projet :
-- le dossier `Data` contenant le [dataset](https://www.kaggle.com/mylesoneill/world-university-rankings?select=timesData.csv) (jeu de données) au format `csv`, un fichier [continents2](https://www.kaggle.com/andradaolteanu/country-mapping-iso-continent-region), ainsi qu'un fichier [`GeoJSON`](https://datahub.io/core/geo-countries#resource-countries) pour la représentation géographique
-- le fichier [`global.R`] qui est utilisé pour la lecture des fichiers ci-dessus et le nettoyage des données
-- le fichier [`ui.R`]  qui est utilisé pour l'aspect graphique de l'interface utilisateur et la définition des entrées
-- le fichier [`server.R`]  qui est utilisé pour la préparation des données et de la construction des sorties
-- le fichier [`project.Rproj`] qui permet d'ouvrir le projet dans sa globalité
-- le dossier `www` pour l'image de la page (représentant notre école :) )
+- le dossier [`Data`](https://git.esiee.fr/tac/r-and-data-visualisation/-/tree/master/Data) contenant le [dataset](https://www.kaggle.com/mylesoneill/world-university-rankings?select=timesData.csv) (jeu de données) au format `csv`, un fichier [continents2](https://www.kaggle.com/andradaolteanu/country-mapping-iso-continent-region), ainsi qu'un fichier [`GeoJSON`](https://datahub.io/core/geo-countries#resource-countries) pour la représentation géographique
+- le fichier [`global.R`](https://git.esiee.fr/tac/r-and-data-visualisation/-/blob/master/global.R) qui est utilisé pour la lecture des fichiers ci-dessus et le nettoyage des données
+- le fichier [`ui.R`](https://git.esiee.fr/tac/r-and-data-visualisation/-/blob/master/ui.R)  qui est utilisé pour l'aspect graphique de l'interface utilisateur et la définition des entrées
+- le fichier [`server.R`](https://git.esiee.fr/tac/r-and-data-visualisation/-/blob/master/server.R)  qui est utilisé pour la préparation des données et de la construction des sorties
+- le fichier [`project.Rproj`](https://git.esiee.fr/tac/r-and-data-visualisation/-/blob/master/project.Rproj) qui permet d'ouvrir le projet dans sa globalité
+- le dossier [`www`] (https://git.esiee.fr/tac/r-and-data-visualisation/-/tree/master/www) pour l'image de la page (représentant notre école :) )
 
 
 # USER'S GUIDE
@@ -53,7 +53,7 @@ Voici l'utilité de ces packages :
 
 ## Fonctionnement du Dashboard
 
-Pour lancer le dashboard, ouvrez le fichier [`project.Rproj`], puis appuyez sur le bouton `Run App` en haut à droite de l'éditeur. Une fenêtre va alors apparaître, et vous pourrez accéder au dashboard.
+Pour lancer le dashboard, ouvrez le fichier `project.Rproj`, puis appuyez sur le bouton `Run App` en haut à droite de l'éditeur. Une fenêtre va alors apparaître, et vous pourrez accéder au dashboard.
 
 Une fois la page cherchée, vous pourrez apercevoir 4 onglets à parcourir nommés respectivement `Graph`, `Histogram` et `Map` et `Top 10` qui contiennent chacun différent type de graphique représentant notre dataset. 
 
@@ -68,7 +68,7 @@ Dans le troisième onglet, vous aurez une représentation géographique du nombr
 
 # DEVELOPPER'S GUIDE
 
-Le code est réparti en 3 fichiers distincts ([`global.R`],[`ui.R`],[`server.R`]). Nous allons voir comment chacun d'eux fonctionne.
+Le code est réparti en 3 fichiers distincts (`global.R`,`ui.R`,`server.R`). Nous allons voir comment chacun d'eux fonctionne.
 
 ## Global
 
@@ -104,27 +104,35 @@ Nous allons ensuite manipuler le fichier geojson. Nous allons le filtrer pour n'
 Nous pouvons enfin créer notre carte avec la fonction `leaflet()`, à laquelle nous ajoutons des polygones définissant les pays, et nous faisons varier la couleur en fonction de la valeur choisie sur l'interface utilisateur.
 
 
+## Exploration et pistes de recherche
+
+Nous avons plusieurs pistes d'amélioration pour notre code.
+Dans un premier temps, nous pensons qu'il serait intéressant de pouvoir se focaliser sur les États-Unis, pays qui rassemble les meilleures universités du monde. On pourrait alors voir la répartition de ces universités entre chaque état, et observer les divergences dans le pays lui-même.
+Nous pensons aussi qu'utiliser les autres datasets des autres instituts serait pertinent. On pourrait par exemple fusionner les datasets pour obtenir plus de données d'universités, ou alors comparer ces datasets pour distinguer les différences dans les critères de notation.
+
+
 # RAPPORT D'ANALYSE
 
-Analysons et interpretons les données dans leur ensemble pour répondre à la problématique. On sait que d'après les données que nous voyons et de manière générale, les universités Américaines monopolisent le classement comme on peut le voir au niveau du tableau Top 10 au fil des années (jusqu'en 2016).
+Analysons et interprétons les données dans leur ensemble pour répondre à la problématique. On sait que d'après les données que nous voyons et de manière générale, les universités Américaines monopolisent le classement comme on peut le voir au niveau du tableau Top 10 au fil des années (jusqu'en 2016).
 
-Intéressons-nous aux valeurs données par le graphique sur différents critères. Est-ce que les meilleures écoles en général dominent vraiment sur tous les critères ? 
+Intéressons-nous plus au valeur données par le Graphe sur différents critères. Est-ce que les meilleures écoles en général dominent vraiment sur tous les critères ? 
 
-La réponse est à première vue non, puisque si par exemple on veut tracer le score total en fonction du pourcentage d'étudiants à l'international, on remarque que c'est plutôt les pays d'Europe qui ont certes un score total un peu moins élevé mais une répartition d'étudiants étrangers un peu plus égale pouvant aller jusqu'à `50 %` d'étudiants étrangers contre maximum `35 %` d'étudiants internationaux dans les universités américaines, ce qui montre bien que l'éducation aux Etats-Unis restent tout de même un privilège pas accessible à tout le monde. C'est pourquoi que sur le critère `International`, l'Europe a en moyenne de meilleurs résultats.
+La réponse est à première vue non, puisque si par exemple on veut tracer le score total en fonction du pourcentage d'étudiants à l'international, on remarque que c'est plutôt les pays d'Europe qui ont certes un score total un peu moins élevé mais une répartition d'étudiants étrangers un peu plus égale pouvant aller jusqu'à 50 % d'étudiants étrangers contre maximum 35 % d'étudiants internationaux dans les universités américaines, ce qui montre bien que l'éducation aux Etats-Unis restent tout de même un privilège pas accessible à tout le monde. C'est pourquoi sur le critère `International`, l'Europe a en moyenne de meilleurs résultats.
 
-Pour le reste des critères numériques à savoir l'éducation, la recherche, les citations et les revenus, les universités d'Amérique du Nord ont de meilleurs résultats en moyenne, suivi de l'Europe, l'Asie, l'Océanie et l'Afrique, ce qui se voit en détails sur le tableau des 10 meilleures universités de chaque année, avec les Etats-Unis et le Royaume-Uni se partageant `majoritairement` les places.  
+Pour le reste des critères numériques à savoir l'enseignement, la recherche, les citations et les revenus, les universités d'Amérique du Nord ont de meilleurs résultats en moyenne, suivi de l'Europe, l'Asie, l'Océanie et l'Afrique, ce qui se voit en détail sur le tableau des 10 meilleures universités de chaque année, avec les Etats-Unis et le Royaume-Uni se partageant majoritairement les places.  
 
 Bien que les nombres jouent en faveur des pays Anglosaxons, on peut voir que cela reste tout de même juste un échantillon du reste des universités. On peut voir sur la deuxième représentation graphique un histogramme des valeurs numériques en globalité et le résultat montre que chaque critère a une moyenne de scores importante entre 20 et 40 sur l'ensemble des universités, montrant bien la notation pointue des critères de l'institut THE. 
 
-Qu'en-est-il de la représentation géographique et comment faire la relation avec les scores obtenus ? On constate que les nombres jouent en la faveur des Etats-Unis avec un nombre conséquent d'universités et de nombres d'étudiants dans le haut du classement. 
+Analysons maintenant ces valeurs et cherchons si certaines d'entre elles sont liées en changeant les variables sur les axes du graphique et en observant si cela forme une régression. On constate que hormis entre la note de l'international et le taux d'elèves internationaux, et la note d'enseignement et le score total, très peu de données corellent entre elles, ce qui montre l'impact du taux d'enseignement dans la notation du score total de chaque université.    
 
-Si maintenant on s'interesse aux valeurs de ratio, on constate que les universités hautes-classées ont un `Ratio of Students-Staff` assez bas, ce qui signifie qu'un intervenant gère moins un nombre d'élève assez bas, ce qui peut expliquer une meilleure méthode et donc de meilleurs résultats. 
+Qu'en est-il de la représentation géographique et comment faire la relation avec les scores obtenus ? On constate que les nombres jouent en la faveur des Etats-Unis avec un nombre conséquent d'universités et de nombres d'étudiants dans le haut du classement. 
 
-Le critère `Ratio of International Students` comme vu précédemment présente des résultats assez homogènes au fil des années, avec en tête de valeurs la Russie et l'Australie aux alentours des 40 % en moyenne.   
-Le dernier ratio `Ratio of Female-Male` montre avec 'surprise' que la haute éducation a une forte tendance féminine en majorité sur tout le globe sur toutes les années. 
+Si maintenant on s'intéresse aux valeurs de ratio, on constate que dans les pays où les universités sont bien classées ayant les plus hauts `Total Score`, ont un `Student / Staff Ratio` assez bas, ce qui signifie qu'un intervenant va gérer un nombre d'élève assez bas, ce qui peut expliquer une meilleure méthode et donc de meilleurs résultats. 
 
-En conclusion, bien que la valeur du score total d'une université reflète en grande partie son niveau académique, il se peut que certains critères passent à la trappe alors qu'ils sont pertinents dans l'étude d'un classement. Certaines valeurs 'qualitatives' montrent que leur étude se doit d'être pertinente pour peut-être pouvoir proposer un différent type de classement. On comprend désormais mieux numériquement pourquoi certaines universités américaines, notamment celles de la `Ivy League` se distinguent mieux dans les sondages et médias par ce qu'elles représentent dans les scores en comparaison avec les autres universités.  
+Le critère `International Students` comme vu précédemment présente des résultats assez homogènes au fil des années, avec en tête de valeurs la Russie et l'Australie aux alentours des 40 % en moyenne.   
+Le dernier ratio `Female / Male Ratio` montre avec 'surprise' que la haute éducation a une forte tendance féminine en majorité sur tout le globe sur toutes les années. 
 
+En conclusion, bien que la valeur du score total d'une université reflète en grande partie son niveau académique, il se peut que certains critères passent à la trappe alors qu'ils sont pertinents dans l'étude d'un classement. Certaines valeurs 'qualitatives' montrent que leur étude se doit d'être pertinente pour peut-être pouvoir proposer un différent type de classement. On comprend désormais mieux numériquement pourquoi certaines universités américaines, notamment celles de la `Ivy League` se distinguent mieux dans les sondages et médias par ce qu'elles représentent dans les scores en comparaison avec les autres universités.   
 
 
 

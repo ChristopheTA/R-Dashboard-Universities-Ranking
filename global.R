@@ -1,5 +1,5 @@
-install.packages("tidyverse")
 install.packages("shiny")
+install.packages("tidyverse")
 install.packages("leaflet")
 install.packages("geojsonio")
 install.packages("shinythemes")
