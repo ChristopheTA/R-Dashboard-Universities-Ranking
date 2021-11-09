@@ -24,7 +24,7 @@ server <- function(input, output) {
     grouped_data <- data %>%
       filter(year==input$map_years) %>%
       group_by(country) %>%
-      summarize(n=n(), num_students = sum(num_students, na.rm = TRUE)) %>%
+      summarize(n=n(), num_students = sum(num_students, na.rm = TRUE), international_ratio = mean(international_students_ratio, na.rm = TRUE)) %>%
       unique() 
     
     # Changement de valeurs en fonction de l'input
@@ -35,11 +35,18 @@ server <- function(input, output) {
         "<strong>%s</strong><br/>%g universities <sup></sup>",
         grouped_data$country, value) %>% lapply(htmltools::HTML)
     }
-    else{
+    else if (input$map_type=="Number of Students"){
       value <- grouped_data$num_students
       bins <- c(1, 100000, 250000, 500000, 800000, 1200000, 1500000, Inf)
       labels <- sprintf(
         "<strong>%s</strong><br/>%g students <sup></sup>",
+        grouped_data$country, value) %>% lapply(htmltools::HTML)
+    }
+    else{
+      value <- grouped_data$international_ratio
+      bins <- c(0, 5, 10, 15, 20, 25, Inf)
+      labels <- sprintf(
+        "<strong>%s</strong><br/>%g %% of international students <sup></sup>",
         grouped_data$country, value) %>% lapply(htmltools::HTML)
     }
     
@@ -62,7 +69,7 @@ server <- function(input, output) {
         fillOpacity = 0.7,
         label = labels
       )  %>%
-      addLegend(pal = pal, values = grouped_data$n, opacity = 0.7, position = "bottomright")
+      addLegend(pal = pal, values = value, opacity = 0.7, position = "bottomright")
   })
   
   # Output du Top 10 des universités
