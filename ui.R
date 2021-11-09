@@ -100,12 +100,17 @@ ui <- fluidPage(
                           # Sélection de la catégorie
                           radioButtons(inputId = "map_type",
                                        label = "Select Category:",
-                                       choices = c("Number of Universities", "Number of Students", "Ratio of International Students", "Ratio Female-Male"),
+                                       choices = c("Number of Universities", 
+                                                   "Number of Students", 
+                                                   "Ratio of Students-Staff",
+                                                   "Ratio of International Students", 
+                                                   "Ratio of Female-Male"),
                                        selected = "Number of Universities")
                         ),
                         
                         # Affichage de la map
                         mainPanel(
+                          textOutput(outputId = "maptitle"),
                           leafletOutput(outputId = "map")
                           
                         )
@@ -113,7 +118,7 @@ ui <- fluidPage(
              ),
              
              # Création de l'onglet du top 10 des universités
-             tabPanel("Top 10", icon = icon("university"),
+             tabPanel("Ranking", icon = icon("university"),
                       sidebarLayout(
                         sidebarPanel(
                           # Slider des années
@@ -134,8 +139,8 @@ ui <- fluidPage(
                         
                         # Affichage du tableau
                         mainPanel(
+                          textOutput(outputId = "top10title"),
                           tableOutput(outputId = "top10")
-                          
                         )
                       )
             )

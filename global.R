@@ -11,10 +11,9 @@ library(shinythemes)
 
 
 
-
 # Importation des datasets
-data <- read.table("Data/timesData.csv", sep = ',', header = T, na.strings = c("NA","-",""))
-continents <- read.csv("Data/continent.csv") %>% subset(select = c("ï..name", "region"))
+data <- read.table("Data/timesData.csv", sep = ',', header = T, na.strings = c("NA","-",""), encoding  = "UTF-8") 
+continents <- read.csv("Data/continents2.csv") %>% subset(select = c("ï..name", "region"))
 colnames(continents) <- c("country", "continent")
 
 # Importation du fichier GeoJSON
@@ -33,6 +32,7 @@ data$country <- data$country %>% str_replace("Serbia","Republic of Serbia")
 continents$country <- continents$country %>% str_replace("Serbia","Republic of Serbia")
 data$country <- data$country %>% str_replace("Russian Federation","Russia")
 data$country <- data$country %>% str_replace("Republic of Ireland","Ireland")
+continents$country <- continents$country %>% str_replace("United States","United States of America")
 
 # Erreur
 data$country <- data$country %>% str_replace("Unisted States of America","United States of America")
@@ -64,9 +64,11 @@ data$female_male_ratio <- data$female_male_ratio %>%
   as.integer()
 colnames(data)[13] <- "female_ratio"
 
+# On récupère le code des autres fichiers
+
 source("server.R", local = TRUE)
 source("ui.R", local = TRUE)
 
-# Run the application 
+# Exécuter l'application 
 shinyApp(ui = ui, server = server)
 

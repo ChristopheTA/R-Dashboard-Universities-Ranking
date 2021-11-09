@@ -5,7 +5,8 @@ server <- function(input, output) {
     data %>%
       filter(year==input$graph_years) %>%
       ggplot(aes_string(x = input$graph_xtype, y = input$graph_ytype, color = "continent")) +
-      geom_point()
+      geom_point() +
+      labs(title = paste("Graph showing", input$graph_ytype, "depending on", input$graph_xtype, "in", input$graph_years))
     
   })
   
@@ -14,7 +15,8 @@ server <- function(input, output) {
     data %>%
       filter(year==input$histo_years) %>%
       ggplot(aes_string(x = input$histo_type)) +
-      geom_histogram(boundary = 0, binwidth = 5)
+      geom_histogram(boundary = 0, binwidth = 5) +
+      labs(title = paste("Histogram showing the count of universities depending on", input$histo_type, "in", input$histo_years))
     
   })
   
@@ -27,6 +29,7 @@ server <- function(input, output) {
       summarize(
         n=n(), 
         num_students = sum(num_students, na.rm = TRUE), 
+        student_staff_ratio = mean(student_staff_ratio, na.rm = TRUE),
         international_ratio = mean(international_students_ratio, na.rm = TRUE), 
         female_ratio = mean(female_ratio, na.rm = TRUE)) %>%
       unique() 
@@ -44,6 +47,13 @@ server <- function(input, output) {
       bins <- c(1, 100000, 250000, 500000, 800000, 1200000, 1500000, Inf)
       labels <- sprintf(
         "<strong>%s</strong><br/>%g students <sup></sup>",
+        grouped_data$country, value) %>% lapply(htmltools::HTML)
+    }
+    else if(input$map_type=="Ratio of Students-Staff"){
+      value <- grouped_data$student_staff_ratio
+      bins <- c(5, 10, 15, 25, 35, 50)
+      labels <- sprintf(
+        "<strong>%s</strong><br/>%g students per staff <sup></sup>",
         grouped_data$country, value) %>% lapply(htmltools::HTML)
     }
     else if(input$map_type=="Ratio of International Students"){
@@ -80,7 +90,13 @@ server <- function(input, output) {
         fillOpacity = 0.7,
         label = labels
       )  %>%
-      addLegend(pal = pal, values = value, opacity = 0.7, position = "bottomright")
+      addLegend(title = input$map_type,
+                pal = pal, values = value, opacity = 0.7, position = "bottomright")
+  })
+  
+  # Output du titre de la map  
+  output$maptitle <- renderText({
+    paste("Map showing the", input$map_type,"in the world in", input$map_years)
   })
   
   # Output du Top 10 des universités
@@ -97,6 +113,11 @@ server <- function(input, output) {
       subset(select = c(world_rank,university_name,country,total_score)) %>%
       head(10)
     
+  })
+  
+  # Output du titre du Top 10 des universités
+  output$top10title <- renderText({
+    paste("Table showing the best universities in", input$top10_country, "in", input$top10_years)
   })
   
 }
