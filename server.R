@@ -4,7 +4,7 @@ server <- function(input, output) {
   output$graph <- renderPlot({
     data %>%
       filter(year==input$graph_years) %>%
-      ggplot(aes_string(x = input$graph_xtype, y = input$graph_ytype)) +
+      ggplot(aes_string(x = input$graph_xtype, y = input$graph_ytype, color = "continent")) +
       geom_point()
     
   })

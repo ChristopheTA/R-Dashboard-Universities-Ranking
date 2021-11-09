@@ -12,11 +12,12 @@ library(shinythemes)
 
 
 
-# Importation du dataset
-data = read.table("Data/timesData.csv", sep = ',', header = T, na.strings = c("NA","-",""))
+# Importation des datasets
+data <- read.table("Data/timesData.csv", sep = ',', header = T, na.strings = c("NA","-",""))
+continents <- read.csv("Data/continent.csv") %>% subset(select = c("ï..name", "region"))
+colnames(continents) <- c("country", "continent")
 
-
-# Define server logic required to draw a histogram
+# Importation du fichier GeoJSON
 countries = geojson_read("Data/countries.geojson", what = "sp")
 
 
@@ -25,14 +26,20 @@ countries = geojson_read("Data/countries.geojson", what = "sp")
 # On change le nom de certains pays
 # Pas le bon nom
 data$country <- data$country %>% str_replace("Hong Kong","Hong Kong S.A.R.")
+continents$country <- continents$country %>% str_replace("Hong Kong","Hong Kong S.A.R.")
 data$country <- data$country %>% str_replace("Macau","Macao S.A.R")
+continents$country <- continents$country %>% str_replace("Macao","Macao S.A.R")
 data$country <- data$country %>% str_replace("Serbia","Republic of Serbia")
+continents$country <- continents$country %>% str_replace("Serbia","Republic of Serbia")
 data$country <- data$country %>% str_replace("Russian Federation","Russia")
 data$country <- data$country %>% str_replace("Republic of Ireland","Ireland")
 
 # Erreur
 data$country <- data$country %>% str_replace("Unisted States of America","United States of America")
 data$country <- data$country %>% str_replace("Unted Kingdom","United Kingdom")
+
+# Fusion des datasets
+data <- merge(data, continents, by = "country")
 
 # On met num_students en nombre
 data$num_students <- data$num_students %>% 
